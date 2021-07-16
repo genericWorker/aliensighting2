@@ -95,28 +95,29 @@ Sighting Date</h3>
 
 <!-- Slider -->
 <h3 class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px; width: 40%; background: #00eeff">
-<label for="amount">Alien Weight (kg)</label></h3>
-<input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+<label for="weight">Alien Weight (kg)</label></h3>
+<input type="text" id="weight" readonly style="border:0; color:#f6931f; font-weight:bold;">
 <div id="slider" style="background: red; width:40%;"></div>
 
 <!-- Slider -->
-<h3 class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px; width: 40%; background: #00eeff"><label for="height">Alien Height (m)</label></h3>
+<h3 class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px; width: 40%; background: #00eeff">
+	<label for="height">Alien Height (m)</label></h3>
 <input type="text" id="height" readonly style="border:0; color:#f6931f; font-weight:bold;">
 <div id="slider2" style="background: red; width:40%;"></div>
 
-<!-- Spinner --> 
+<!-- Spinner -->
 <h3 class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px; width: 40%; background:#00eeff">
  Number of Eyes</h3>
-<input id="spinnereyes" >
+<input id="spinnereyes" value=5>
 
 <!-- Spinner -->
 <h3 class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px; width: 40%; background:#00eeff">Number of Arms</h3>
-<input id="spinnerarms">
+<input id="spinnerarms"  value=0>
 
 <!-- Spinner -->
 <h3 class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px; width: 40%; background:#00eeff">
 Number of Legs</h3>
-<input id="spinnerlegs">
+<input id="spinnerlegs"  value=5>
 
 
 <h3 class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px; width: 40%; background: #00eeff">
@@ -126,18 +127,18 @@ Color of Creature
   <div id="red"></div>
   <div id="green"></div>
   <div id="blue"></div>
-   
+
   <div id="swatch" class="ui-widget-content ui-corner-all"></div>
   <br>
   <br>
   <p>
   <button id="dialog-link" class="ui-button ui-corner-all ui-widget">Submit</button>
 </p>
-  
+
 <!-- ui-dialog -->
 <div id="dialog" title="Thank you!">
 
-	<p style=font-family: roboto">Your sighting has been reported.<br>Keep watching.</p>
+	<p style="font-family:roboto">Your sighting has been reported.<br>Keep watching!</p>
 	<img src="images/alien2.png" width=50 height=50>
 	<div id="results"></div>
 </div>
@@ -148,25 +149,27 @@ Color of Creature
 
 	function handleFormSubmit(event) {
 		event.preventDefault();
-		
-		const dt = $("#datepicker").val();
-		const creatureType = $("#creatureType :radio:checked").attr('id');
-		const weight = $("#slider").slider("option", "value");
-        const height = $("#slider2").slider("option", "value");
-		const numberEyes = $("#spinnereyes").spinner("option", "value"); 
-		const numberArms = $("#spinnerarms").spinner("option", "value"); 
-		const numberLegs = $("#spinnerlegs").spinner("option", "value"); 
-		const json = "{sitingDate:" + dt + "," + "creatureType:" + creatureType + "," + "weight:" + weight + "," + "height:" + height +  "," + "numberOfEyes:" + numberEyes + "," +  "numberOfArms:" + numberArms  + "," +  "numberOfLegs :" + numberLegs + "," +
-		"color:" + 	$( "#swatch" ).css("background-color") + "}";
-		const heading = "<h4>Alien Sighting Report Data<h4>"
+		let siteReport = new Object();
+		siteReport.date =  $("#datepicker").val();
+		siteReport.creatureType = $("#creatureType :radio:checked").attr('id');
+		siteReport.weight = $("#slider").slider("option", "value");
+ 		siteReport.height = $("#slider2").slider("option", "value");
+		siteReport.numberEyes =  $("#spinnereyes").spinner("value");
+		siteReport.numberArms = $("#spinnerarms").spinner("value");
+		siteReport.numberLegs = $("#spinnerlegs").spinner("value");
+		siteReport.color = $( "#swatch" ).css("background-color");
+		// Convert siteReport object to a json object
+		const json = JSON.stringify(siteReport);
+		const heading = "<h4 className=\"ui-state-default ui-corner-all ui-helper-clearfix\" style=\"padding:4px; background: #999f29;\">Alien Sighting Report Json Data<h4>"
 		results.innerHTML = heading + json;
 	}
 
 	$( function() {
-	  $("#spinnereyes").spinner({min: 0, max:100, value: 3});
-	  $( "#spinnerarms" ).spinner({min: 0, max:117, value: 7});
-	  $( "#spinnerlegs" ).spinner({min: 0, max:21, value: 17});
-   
+		// initialize these
+	  $("#spinnereyes").spinner({min: 0, max:100});
+	  $( "#spinnerarms" ).spinner({min: 0, max:117});
+	  $( "#spinnerarms" ).spinner({min: 0, max:117});
+	  $( "#spinnerlegs" ).spinner({min: 0, max:21});
 	});
 	</script>
 <script>
@@ -177,10 +180,10 @@ $("#slider-range-max1").slider({
       max: 500,
       value: 20,
       slide: function( event, ui ) {
-        $( "#amount" ).val( "Weight: " + ui.value  + " kg");
+        $( "#weight" ).val( "Weight: " + ui.value  + " kg");
       }
     });
-    $("#amount" ).val("Weight: " +  20 + " kg");
+    $("#weight" ).val("Weight: " +  20 + " kg");
 
 
 $( "#button" ).button();
@@ -216,7 +219,7 @@ $( "#dialog" ).dialog({
 $( "#dialog-link" ).click(function( event ) {
 //	event.preventDefault();
 	$( "#dialog" ).dialog( "open" );
-	handleFormSubmit(event); 
+	handleFormSubmit(event);
 });
 
 $( "#datepicker" ).datepicker({
@@ -229,7 +232,7 @@ $("#slider" ).slider({
       max: 500,
       value: 20,
       slide: function( event, ui ) {
-        $( "#amount" ).val( "Weight: " + ui.value  + " kg");
+        $( "#weight" ).val( "Weight: " + ui.value  + " kg");
 	  }
 }); 
 
